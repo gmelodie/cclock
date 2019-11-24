@@ -1,10 +1,10 @@
-# centhclock
+# cclock
 Time measure divisible by 100, not 60
 
 
 Why the heck is a minute 60 seconds? Why on earth is an hour 60 minutes? Wouldn't it make much more sense if a minute were 100 seconds, and an hour 100 minutes? Oh wait, how about a day being 100 hours?
 
-Introducing centhclock: a time measure that turns time counting into something that *actually* makes sense.
+Introducing cclock (centhclock): a time measure that turns time counting into something that *actually* makes sense.
 
 A centhclock is composed by three basic time measures: centhconds, centhutes and centhours
 
