@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 
@@ -10,40 +11,47 @@ import (
 )
 
 type normalTime struct {
-	seconds float64
-	minutes float64
-	hours   float64
+	seconds int
+	minutes int
+	hours   int
 }
 
 type centhTime struct {
-	centhconds float64
-	centhutes  float64
-	centhours  float64
+	centhconds int
+	centhutes  int
+	centhours  int
 }
 
 // Default value of cs (in seconds)
-var csVal = 0.35999997
-
-// Default value of ct (in seconds)
-var ctVal = 35.999997
-
-// Default value of ch (in seconds)
-var chVal = 3599.9997
+var secToCSVal = 2.777778
+var csToSecVal = 0.35999997
 
 func toCenth(n normalTime) centhTime {
-	return centhTime{
-		n.seconds * csVal,
-		n.minutes * ctVal,
-		n.hours * chVal,
-	}
+	totalsecs := n.hours*3600 + n.minutes*60 + n.seconds
+	totalcs := int(math.Round(float64(totalsecs) * secToCSVal))
+
+	res := centhTime{}
+	res.centhours = totalcs / 10000
+	totalcs = totalcs - 10000*res.centhours
+	res.centhutes = totalcs / 100
+	totalcs = totalcs - 100*res.centhutes
+	res.centhconds = totalcs
+
+	return res
 }
 
 func toNormal(c centhTime) normalTime {
-	return normalTime{
-		c.centhconds / csVal,
-		c.centhutes / ctVal,
-		c.centhours / chVal,
-	}
+	totalcs := c.centhours*10000 + c.centhutes*100 + c.centhconds
+	totalsecs := int(math.Round(float64(totalcs) * csToSecVal))
+
+	res := normalTime{}
+	res.hours = totalsecs / 3600
+	totalsecs = totalsecs - 3600*res.hours
+	res.minutes = totalsecs / 60
+	totalsecs = totalsecs - 60*res.minutes
+	res.seconds = totalsecs
+
+	return res
 }
 
 func main() {
@@ -51,7 +59,7 @@ func main() {
 
 	app.Name = "cclock"
 	app.Usage = "cclock's command-line interface"
-	app.Version = "0.3"
+	app.Version = "0.4"
 
 	app.Action = func(c *cli.Context) error {
 		n := normalTime{}
@@ -63,17 +71,17 @@ func main() {
 		}
 
 		if c.NArg() >= 1 {
-			n.seconds, _ = strconv.ParseFloat(c.Args().Get(0), 32)
+			n.seconds, _ = strconv.Atoi(c.Args().Get(0))
 		}
 		if c.NArg() >= 2 {
-			n.minutes, _ = strconv.ParseFloat(c.Args().Get(1), 32)
+			n.minutes, _ = strconv.Atoi(c.Args().Get(1))
 		}
 		if c.NArg() == 3 {
-			n.hours, _ = strconv.ParseFloat(c.Args().Get(2), 32)
+			n.hours, _ = strconv.Atoi(c.Args().Get(2))
 		}
 
 		centh := toCenth(n)
-		fmt.Printf("Sleeping for\t%fch\t%fct\t%fcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+		fmt.Printf("Sleeping for\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
 
 		return nil
 	}
