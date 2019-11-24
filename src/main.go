@@ -71,17 +71,18 @@ func main() {
 		}
 
 		if c.NArg() >= 1 {
-			n.seconds, _ = strconv.Atoi(c.Args().Get(0))
+			n.hours, _ = strconv.Atoi(c.Args().Get(0))
 		}
 		if c.NArg() >= 2 {
 			n.minutes, _ = strconv.Atoi(c.Args().Get(1))
 		}
 		if c.NArg() == 3 {
-			n.hours, _ = strconv.Atoi(c.Args().Get(2))
+			n.seconds, _ = strconv.Atoi(c.Args().Get(2))
 		}
 
 		centh := toCenth(n)
-		fmt.Printf("Sleeping for\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+		fmt.Printf("Normal Time:\t%dh\t%dmin\t%ds\n", n.hours, n.minutes, n.seconds)
+		fmt.Printf("CTime:\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
 
 		return nil
 	}
