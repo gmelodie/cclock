@@ -82,7 +82,7 @@ func main() {
 
 		centh := toCenth(n)
 		fmt.Printf("Normal Time:\t%dh\t%dmin\t%ds\n", n.hours, n.minutes, n.seconds)
-		fmt.Printf("CTime:\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+		fmt.Printf("CTime:\t\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
 
 		return nil
 	}
