@@ -28,7 +28,6 @@ const secToCSVal = 2.777778
 const csToSecVal = 0.35999997
 const csToNanoSec = 359999970
 
-
 func toCenth(n normalTime) centhTime {
 	totalsecs := n.hours*3600 + n.minutes*60 + n.seconds
 	totalcs := int(math.Round(float64(totalsecs) * secToCSVal))
@@ -58,10 +57,10 @@ func toNormal(c centhTime) normalTime {
 }
 
 func gotimeToNormalTime(t time.Time) normalTime {
-	return normalTime {
+	return normalTime{
 		seconds: t.Second(),
 		minutes: t.Minute(),
-		hours: t.Hour(),
+		hours:   t.Hour(),
 	}
 }
 
@@ -81,13 +80,13 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:   "clock",
+			Name: "clock",
 			Action: func(c *cli.Context) error {
 				for {
 					n := gotimeToNormalTime(time.Now())
 					convertAndPrintSummary(n)
 					time.Sleep(35999997)
-					fmt.Print("\u001b[2A")	// Reset cursor
+					fmt.Print("\u001b[2A") // Reset cursor
 				}
 				return nil
 			},
@@ -100,7 +99,7 @@ func main() {
 				convertAndPrintSummary(n)
 				return nil
 			},
-		},		
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
