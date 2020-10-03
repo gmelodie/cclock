@@ -24,8 +24,10 @@ type centhTime struct {
 }
 
 // Default value of cs (in seconds)
-var secToCSVal = 2.777778
-var csToSecVal = 0.35999997
+const secToCSVal = 2.777778
+const csToSecVal = 0.35999997
+const csToNanoSec = 359999970
+
 
 func toCenth(n normalTime) centhTime {
 	totalsecs := n.hours*3600 + n.minutes*60 + n.seconds
@@ -81,7 +83,11 @@ func main() {
 		{
 			Name:   "clock",
 			Action: func(c *cli.Context) error {
-				fmt.Println("TODO")
+				for {
+					n := gotimeToNormalTime(time.Now())
+					convertAndPrintSummary(n)
+					time.Sleep(35999997)
+				}
 				return nil
 			},
 		},
