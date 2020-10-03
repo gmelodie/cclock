@@ -6,14 +6,16 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/urfave/cli"
 )
 
 type normalTime struct {
-	seconds int
-	minutes int
-	hours   int
+	nanoseconds int
+	seconds     int
+	minutes     int
+	hours       int
 }
 
 type centhTime struct {
@@ -23,12 +25,13 @@ type centhTime struct {
 }
 
 // Default value of cs (in seconds)
-var secToCSVal = 2.777778
-var csToSecVal = 0.35999997
+const secToCSVal = 2.777778
+const csToNanoSec = 359999970
+const csToSecVal = csToNanoSec / 1e9
 
 func toCenth(n normalTime) centhTime {
-	totalsecs := n.hours*3600 + n.minutes*60 + n.seconds
-	totalcs := int(math.Round(float64(totalsecs) * secToCSVal))
+	totalsecs := float64(n.hours*3600+n.minutes*60+n.seconds) + float64(n.nanoseconds)/1e9
+	totalcs := int(math.Round(totalsecs * secToCSVal))
 
 	res := centhTime{}
 	res.centhours = totalcs / 10000
@@ -54,12 +57,52 @@ func toNormal(c centhTime) normalTime {
 	return res
 }
 
+func gotimeToNormalTime(t time.Time) normalTime {
+	return normalTime{
+		nanoseconds: t.Nanosecond(),
+		seconds:     t.Second(),
+		minutes:     t.Minute(),
+		hours:       t.Hour(),
+	}
+}
+
+func convertAndPrintSummary(normal normalTime) {
+	centh := toCenth(normal)
+
+	fmt.Printf("Normal Time:\t%2dh\t%02dmin\t%02ds\n", normal.hours, normal.minutes, normal.seconds)
+	fmt.Printf("CTime:\t\t%2dch\t%02dct\t%02dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+}
+
 func main() {
 	var app = cli.NewApp()
 
 	app.Name = "cclock"
 	app.Usage = "cclock's command-line interface"
 	app.Version = "0.4"
+
+	app.Commands = []cli.Command{
+		{
+			Name: "clock",
+			Action: func(c *cli.Context) error {
+				for {
+					n := gotimeToNormalTime(time.Now())
+					convertAndPrintSummary(n)
+					time.Sleep(35999997)
+					fmt.Print("\u001b[2A") // Reset cursor
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "now",
+			Usage: "Show current time (decimal and normal)",
+			Action: func(c *cli.Context) error {
+				n := gotimeToNormalTime(time.Now())
+				convertAndPrintSummary(n)
+				return nil
+			},
+		},
+	}
 
 	app.Action = func(c *cli.Context) error {
 		n := normalTime{}
@@ -80,9 +123,7 @@ func main() {
 			n.seconds, _ = strconv.Atoi(c.Args().Get(2))
 		}
 
-		centh := toCenth(n)
-		fmt.Printf("Normal Time:\t%dh\t%dmin\t%ds\n", n.hours, n.minutes, n.seconds)
-		fmt.Printf("CTime:\t\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+		convertAndPrintSummary(n)
 
 		return nil
 	}
