@@ -87,6 +87,7 @@ func main() {
 					n := gotimeToNormalTime(time.Now())
 					convertAndPrintSummary(n)
 					time.Sleep(35999997)
+					fmt.Print("\u001b[2A")	// Reset cursor
 				}
 				return nil
 			},
