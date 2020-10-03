@@ -12,9 +12,10 @@ import (
 )
 
 type normalTime struct {
-	seconds int
-	minutes int
-	hours   int
+	nanoseconds int
+	seconds     int
+	minutes     int
+	hours       int
 }
 
 type centhTime struct {
@@ -25,12 +26,12 @@ type centhTime struct {
 
 // Default value of cs (in seconds)
 const secToCSVal = 2.777778
-const csToSecVal = 0.35999997
 const csToNanoSec = 359999970
+const csToSecVal = csToNanoSec / 1e9
 
 func toCenth(n normalTime) centhTime {
-	totalsecs := n.hours*3600 + n.minutes*60 + n.seconds
-	totalcs := int(math.Round(float64(totalsecs) * secToCSVal))
+	totalsecs := float64(n.hours*3600+n.minutes*60+n.seconds) + float64(n.nanoseconds)/1e9
+	totalcs := int(math.Round(totalsecs * secToCSVal))
 
 	res := centhTime{}
 	res.centhours = totalcs / 10000
@@ -58,17 +59,18 @@ func toNormal(c centhTime) normalTime {
 
 func gotimeToNormalTime(t time.Time) normalTime {
 	return normalTime{
-		seconds: t.Second(),
-		minutes: t.Minute(),
-		hours:   t.Hour(),
+		nanoseconds: t.Nanosecond(),
+		seconds:     t.Second(),
+		minutes:     t.Minute(),
+		hours:       t.Hour(),
 	}
 }
 
 func convertAndPrintSummary(normal normalTime) {
 	centh := toCenth(normal)
 
-	fmt.Printf("Normal Time:\t%dh\t%dmin\t%ds\n", normal.hours, normal.minutes, normal.seconds)
-	fmt.Printf("CTime:\t\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+	fmt.Printf("Normal Time:\t%2dh\t%02dmin\t%02ds\n", normal.hours, normal.minutes, normal.seconds)
+	fmt.Printf("CTime:\t\t%2dch\t%02dct\t%02dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
 }
 
 func main() {
