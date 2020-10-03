@@ -1,6 +1,37 @@
 # cclock
 Time measure divisible by 100, not 60
 
+## Installation
+
+```
+$ go get github.com/gmelodie/cclock
+```
+
+## Usage
+
+Convert 1h 30min and 15s from weird (also called "normal") time to ctime
+```
+$ cclock 1 30 15
+Normal Time:	234h	03min	03s
+CTime:		234ch	05ct	09cs
+```
+
+Convert current time to ctime
+```
+$ cclock now
+Normal Time:	11h	43min	06s
+CTime:		11ch	71ct	84cs
+```
+
+Print a live clock that keeps refreshing
+```
+$ cclock clock
+Normal Time:	11h	43min	06s
+CTime:		11ch	71ct	84cs
+```
+
+
+## Inspiration
 
 Why the heck is a minute 60 seconds? Why on earth is an hour 60 minutes? Wouldn't it make much more sense if a minute were 100 seconds, and an hour 100 minutes?
 
