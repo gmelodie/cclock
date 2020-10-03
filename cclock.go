@@ -6,6 +6,7 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/urfave/cli"
 )
@@ -54,12 +55,46 @@ func toNormal(c centhTime) normalTime {
 	return res
 }
 
+func gotimeToNormalTime(t time.Time) normalTime {
+	return normalTime {
+		seconds: t.Second(),
+		minutes: t.Minute(),
+		hours: t.Hour(),
+	}
+}
+
+func convertAndPrintSummary(normal normalTime) {
+	centh := toCenth(normal)
+
+	fmt.Printf("Normal Time:\t%dh\t%dmin\t%ds\n", normal.hours, normal.minutes, normal.seconds)
+	fmt.Printf("CTime:\t\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+}
+
 func main() {
 	var app = cli.NewApp()
 
 	app.Name = "cclock"
 	app.Usage = "cclock's command-line interface"
 	app.Version = "0.4"
+
+	app.Commands = []cli.Command{
+		{
+			Name:   "clock",
+			Action: func(c *cli.Context) error {
+				fmt.Println("TODO")
+				return nil
+			},
+		},
+		{
+			Name:  "now",
+			Usage: "Show current time (decimal and normal)",
+			Action: func(c *cli.Context) error {
+				n := gotimeToNormalTime(time.Now())
+				convertAndPrintSummary(n)
+				return nil
+			},
+		},		
+	}
 
 	app.Action = func(c *cli.Context) error {
 		n := normalTime{}
@@ -80,9 +115,7 @@ func main() {
 			n.seconds, _ = strconv.Atoi(c.Args().Get(2))
 		}
 
-		centh := toCenth(n)
-		fmt.Printf("Normal Time:\t%dh\t%dmin\t%ds\n", n.hours, n.minutes, n.seconds)
-		fmt.Printf("CTime:\t\t%dch\t%dct\t%dcs\n", centh.centhours, centh.centhutes, centh.centhconds)
+		convertAndPrintSummary(n)
 
 		return nil
 	}
