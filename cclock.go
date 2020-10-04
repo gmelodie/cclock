@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/urfave/cli"
+	"github.com/k0kubun/go-ansi"
 )
 
 type normalTime struct {
@@ -88,7 +89,7 @@ func main() {
 					n := gotimeToNormalTime(time.Now())
 					convertAndPrintSummary(n)
 					time.Sleep(35999997)
-					fmt.Print("\u001b[2A") // Reset cursor
+					ansi.Print("\u001b[2A") // Reset cursor
 				}
 				return nil
 			},
