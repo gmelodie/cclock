@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/urfave/cli"
 	"github.com/k0kubun/go-ansi"
+	"github.com/urfave/cli"
 )
 
 type normalTime struct {
@@ -89,11 +89,13 @@ func main() {
 		{
 			Name: "clock",
 			Action: func(c *cli.Context) error {
+				fmt.Print("\n\n") // Ensure that cursor does not move into previous text in first iteration
+				timeChannel := time.Tick(csToNanoSec)
 				for {
-					n := gotimeToNormalTime(time.Now())
-					convertAndPrintSummary(n)
-					time.Sleep(csToNanoSec)
+					now := <-timeChannel
 					moveCursorUp(2)
+					n := gotimeToNormalTime(now)
+					convertAndPrintSummary(n)
 				}
 				return nil
 			},
