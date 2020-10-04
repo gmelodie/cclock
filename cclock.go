@@ -92,7 +92,7 @@ func main() {
 				for {
 					n := gotimeToNormalTime(time.Now())
 					convertAndPrintSummary(n)
-					time.Sleep(35999997)
+					time.Sleep(csToNanoSec)
 					moveCursorUp(2)
 				}
 				return nil
